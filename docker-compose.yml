@@ -25,7 +25,24 @@ services:
       - "222:22"
     depends_on:
        - db
-
+  keycloak:
+    container_name: keycloak
+    image: jboss/keycloak:${KEYCLOAK_VERSION}
+    ports:
+      - 8080:8080
+    environment:
+      KEYCLOAK_LOGLEVEL: DEBUG
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
+      DB_VENDOR: postgres
+      DB_ADDR: db
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - gitea-network
+    depends_on:
+      - db
   db:
     container_name: postgres
     image: postgres:${POSTGRES_VERSION}
@@ -38,4 +55,3 @@ services:
        - gitea-network
     volumes:
        - ./volumes/gitea/postgres:/var/lib/postgresql/data
-
